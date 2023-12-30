@@ -1,0 +1,65 @@
+package me.fernndinho.shop.account;
+
+import me.fernndinho.shop.account.payload.AccountLoginRequest;
+import me.fernndinho.shop.account.payload.AccountRegisterRequest;
+import me.fernndinho.shop.account.models.AccountEntity;
+import me.fernndinho.shop.account.models.AccountType;
+import me.fernndinho.shop.account.repo.AccountRepository;
+import me.fernndinho.shop.shared.utils.JwtTokenUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AccountService implements UserDetailsService {
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenUtil jwt;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return accountRepository
+                .findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("the user does not exist"));
+    }
+
+    public ResponseEntity<?> register(AccountRegisterRequest request) {
+        if(accountRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("that email its already registered"); //TODO: found a better error
+        }
+
+        String email = request.getEmail();
+        String encodedPass = passwordEncoder.encode(request.getPassword());
+
+        //TODO: send a confirmation email
+        AccountEntity entity = new AccountEntity(null,request.getName(), request.getLastname(), email, encodedPass, AccountType.CUSTOMER);
+        AccountEntity saved = accountRepository.save(entity);
+
+        String token = jwt.generateToken(saved);
+
+        return ResponseEntity.ok(token);
+    }
+
+    public ResponseEntity<?> login(AccountLoginRequest request) {
+        if(!accountRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("invalid password or email");
+        }
+
+        AccountEntity entity = accountRepository.findByEmail(request.getEmail()).get();
+
+        if(!passwordEncoder.matches(request.getPassword(), entity.getPassword())) {
+            throw new RuntimeException("invalid password or email");
+        }
+
+        String token = jwt.generateToken(entity);
+
+        return ResponseEntity.ok(token);
+    }
+}
