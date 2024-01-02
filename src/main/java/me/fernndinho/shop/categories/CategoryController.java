@@ -45,8 +45,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete/{slug}")
-    public ResponseEntity<Void> removeCategory(@PathVariable("slug") String slug) {
-        categoryService.deleteBySlug(slug);
+    public ResponseEntity<Void> removeCategory(@PathVariable(value = "slug") String slug,
+                                               @PathVariable(value = "childs", required = false) boolean removeChilds
+    ) {
+        categoryService.deleteBySlug(slug, removeChilds);
 
         return ResponseEntity.noContent().build();
     }

@@ -1,15 +1,16 @@
 package me.fernndinho.shop.categories.repo;
 
 import me.fernndinho.shop.categories.models.CategoryEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface CategoryRepository extends CrudRepository<CategoryEntity, Long> {
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     Optional<CategoryEntity> findBySlug(String slug);
 
-    List<CategoryEntity> findAll();
+    List<CategoryEntity> findByFather(CategoryEntity father);
 
     void deleteBySlug(String slug);
 

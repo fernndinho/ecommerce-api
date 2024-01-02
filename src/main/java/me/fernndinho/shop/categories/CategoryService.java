@@ -42,19 +42,13 @@ public class CategoryService {
 
         CategoryEntity categoryCreated = categoryRepo.save(entity);
 
-        /*if(categoryPayload.getFather() != null) {
-            CategoryEntity father = repository.findBySlug(categoryPayload.getFather()).get();
+        if(categoryPayload.getFather() != null) {
+            CategoryEntity father = categoryRepo.findBySlug(categoryPayload.getFather()).get();
             father.getChilds().add(entity);
-            repository.save(father);
-            categoryCreated.setFather(father);
-        }*/
+            categoryRepo.save(father);
 
-        /*if(categoryPayload.getChilds() != null && !categoryPayload.getChilds().isEmpty()) {
-            List<CategoryEntity> childs = repository.findBySlugIn(categoryPayload.getChilds());
-            childs.forEach(categoryEntity -> categoryEntity.setFather(entity));
-            repository.saveAll(childs);
-            categoryCreated.setChilds(childs);
-        }*/
+            categoryCreated.setFather(father);
+        }
 
         CategoryEntity finalCategory = categoryRepo.save(categoryCreated);
 
@@ -65,9 +59,32 @@ public class CategoryService {
         throw new UnsupportedOperationException();
     }
 
-    public void deleteBySlug(String slug) {
+    public void deleteBySlug(String slug, boolean removeChilds) {
         CategoryEntity category = categoryRepo.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("category can not be deleted if does not exist"));
+
+        if(category.hasFather()) {
+            category.getFather().getChilds().remove(category);
+
+            categoryRepo.save(category.getFather());
+        }
+
+        if(category.hasChilds()) {
+            if(!removeChilds) {
+                List<CategoryEntity> childs = category.getChilds();
+
+                if(category.hasFather()) {
+                    childs.forEach(child -> category.getFather().getChilds().addAll(childs));
+
+                    categoryRepo.saveAll(childs);
+                    categoryRepo.save(category.getFather());
+                } else {
+                    childs.forEach(child -> category.setFather(null));
+                }
+            } else {
+                categoryRepo.deleteAll(category.getChilds());
+            }
+        }
 
         List<ProductEntity> products = productRepo.findByCategoriesIn(Lists.newArrayList(category));
 

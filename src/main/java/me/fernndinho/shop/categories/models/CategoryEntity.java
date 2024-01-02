@@ -3,10 +3,8 @@ package me.fernndinho.shop.categories.models;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 
 @Getter
@@ -20,6 +18,21 @@ public class CategoryEntity {
     private String slug;
     private String description;
 
+    @ManyToOne
+    @JoinColumn(name = "father_id")
+    private CategoryEntity father;
+
+    @OneToMany(mappedBy = "father")
+    private List<CategoryEntity> childs;
+
     private boolean hidden = false;
+
+    public boolean hasFather() {
+        return father != null;
+    }
+
+    public boolean hasChilds() {
+        return childs != null && !childs.isEmpty();
+    }
 }
 

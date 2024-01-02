@@ -14,6 +14,9 @@ public class CategoryResponse {
     private String slug;
     private String description;
 
+    private String father;
+    private List<String> chids;
+
     public CategoryResponse(CategoryEntity entity) {
         name = entity.getName();
         slug = entity.getSlug();
