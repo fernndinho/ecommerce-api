@@ -1,13 +1,9 @@
 package me.fernndinho.shop.products;
 
-import me.fernndinho.shop.account.models.AccountType;
 import me.fernndinho.shop.products.payload.ProductCreateRequest;
 import me.fernndinho.shop.products.payload.ProductDetailsResponse;
+import me.fernndinho.shop.products.payload.ProductQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,10 +14,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @GetMapping("/getall")
-    public List<ProductDetailsResponse> getAll() {
-        return productService.getAll();
+    public List<ProductDetailsResponse> getAll(ProductQueryRequest query) {
+        return productService.getPaginated(query);
     }
 
     @GetMapping("/get/{slug}")

@@ -29,7 +29,7 @@ public class ProductVariantEntity {
     @Convert(converter = StringListConverter.class)
     private List<String> images;
 
-    @Convert(converter = StringListConverter.class)
+    @ElementCollection
     private List<String> colors;
 
     public void generateSku() {

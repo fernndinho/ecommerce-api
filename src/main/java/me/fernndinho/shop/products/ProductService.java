@@ -8,6 +8,7 @@ import me.fernndinho.shop.files.payload.FileResponse;
 import me.fernndinho.shop.files.services.LocalFileService;
 import me.fernndinho.shop.products.payload.ProductCreateRequest;
 import me.fernndinho.shop.products.payload.ProductDetailsResponse;
+import me.fernndinho.shop.products.payload.ProductQueryRequest;
 import me.fernndinho.shop.products.payload.ProductVariantRequest;
 import me.fernndinho.shop.products.mapper.ProductMapper;
 import me.fernndinho.shop.products.models.ProductEntity;
@@ -15,6 +16,10 @@ import me.fernndinho.shop.products.models.ProductVariantEntity;
 import me.fernndinho.shop.products.repo.ProductRepository;
 import me.fernndinho.shop.products.repo.ProductVariantRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,8 +40,29 @@ public class ProductService {
     @Autowired
     private LocalFileService fileService;
 
-    public List<ProductDetailsResponse> getAll() {
-        List<ProductEntity> entities = productRepo.findAll();
+    public List<ProductDetailsResponse> getPaginated(ProductQueryRequest request) {
+        Sort sort = Sort.by(request.getOrderBy());
+
+        if(request.isAsc())
+            sort.ascending();
+        else
+            sort.descending();
+
+        Pageable pageable = PageRequest.of(request.getPage(), 12, sort);
+
+        Page<ProductEntity> entities;
+
+
+        if(!request.getColors().isEmpty() && !request.getCategories().isEmpty()) {/// refact this
+            entities = productRepo.findByCategoriesSlugInAndVariantsColorsIn(request.getCategories(), request.getColors(), pageable);
+        } if(!request.getCategories().isEmpty() && request.getColors().isEmpty()) {
+            entities = productRepo.findByCategoriesSlugIn(request.getCategories(), pageable);
+        } else if(request.getCategories().isEmpty() && !request.getColors().isEmpty()) {
+            entities = productRepo.findByVariantsColorsIn(request.getColors(),pageable);
+        } else {
+            entities = productRepo.findAll(pageable);
+        }
+
 
         return entities.stream()
                 .map(entity -> productMapper.toDto(entity))
@@ -93,21 +119,4 @@ public class ProductService {
 
         return variantRepo.saveAll(variants);
     }
-
-
-
-    /*private List<ProductVariantEntity> createVariants(ProductEntity owner, List<ProductVariantRequest> variants) {
-        List<ProductVariantEntity> entities = variants.stream()
-                .map(pv -> productMapper.toEntity(pv))
-                .collect(Collectors.toList());
-
-        entities.forEach(pv -> {
-            pv.setProduct(owner);
-            pv.generateSku();
-        });
-
-        return variantRepo.saveAll(entities);
-    }*/
-
-
 }
