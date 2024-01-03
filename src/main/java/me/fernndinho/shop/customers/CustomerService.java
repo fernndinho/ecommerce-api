@@ -4,6 +4,7 @@ import me.fernndinho.shop.account.models.AccountEntity;
 import me.fernndinho.shop.customers.payload.*;
 import me.fernndinho.shop.customers.mapper.CustomerMapper;
 import me.fernndinho.shop.customers.models.CustomerEntity;
+import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -44,10 +45,10 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    public CustomerDetailsResponse getCustomer(Long id) {
+    public CustomerDetailsResponse getCustomer(Long id) { //TODO: replace id with email
         return repo.findById(id)
                 .map(e -> mapper.toDetailedDto(e))
-                .orElseThrow(() -> new RuntimeException("client not found"));
+                .orElseThrow(() -> new NotFoundException("client not found"));
     }
 }
 

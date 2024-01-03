@@ -3,6 +3,7 @@ package me.fernndinho.shop.colors;
 import me.fernndinho.shop.colors.models.ColorEntity;
 import me.fernndinho.shop.colors.payload.ColorPayload;
 import me.fernndinho.shop.colors.repo.ColorRepository;
+import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class ColorService {
     public ColorPayload getColor(String slug) {
         return repo.findBySlug(slug)
                 .map(ColorPayload::new)
-                .orElseThrow(() -> new RuntimeException("color" + slug +" not found"));
+                .orElseThrow(() -> new NotFoundException("color provided not found"));
     }
 
     public ColorPayload create(ColorPayload payload) {

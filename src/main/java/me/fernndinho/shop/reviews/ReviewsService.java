@@ -11,6 +11,8 @@ import me.fernndinho.shop.reviews.models.ReviewEntity;
 import me.fernndinho.shop.reviews.payload.ReviewCreateRequest;
 import me.fernndinho.shop.reviews.payload.ReviewDetailedResponse;
 import me.fernndinho.shop.reviews.payload.ReviewResponse;
+import me.fernndinho.shop.shared.error.exceptions.BadRequestException;
+import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ public class ReviewsService {
 
     public List<ReviewResponse> getReviewsOfProduct(String productSlug) { //TODO: if the request is from an admin should also return the email
         ProductEntity productEntity = productRepo.findBySlug(productSlug)
-                .orElseThrow(() -> new RuntimeException("product not found"));
+                .orElseThrow(() -> new BadRequestException("product provided does not exist"));
 
         List<ReviewEntity> reviews = reviewsRepo.findAllByProduct(productEntity);
 
@@ -39,7 +41,7 @@ public class ReviewsService {
 
     public List<ReviewDetailedResponse> getAllReviewsOfCustomer(String email) {
         CustomerEntity customer = clientRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("customer not found"));
+                .orElseThrow(() -> new BadRequestException("customer provided does not exist"));
 
         List<ReviewEntity> reviews = reviewsRepo.findAllByCustomer(customer);
 
@@ -50,10 +52,10 @@ public class ReviewsService {
 
     public ReviewResponse createReview(UserDetails details, ReviewCreateRequest request) {
         CustomerEntity customer = clientRepo.findByEmail(details.getUsername())
-                .orElseThrow(() -> new RuntimeException("you must be a customer to make a review"));
+                .orElseThrow(() -> new BadRequestException("you must be a customer to make a review"));
 
         ProductEntity productEntity = productRepo.findBySlug(request.getProduct())
-                .orElseThrow(() -> new RuntimeException("the product provided doesnt exist"));
+                .orElseThrow(() -> new BadRequestException("the product provided does not exist"));
 
         //TODO: check if the customer has purchased the product and if already exist a review
 

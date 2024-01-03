@@ -11,6 +11,7 @@ import me.fernndinho.shop.payments.repo.PaymentRepository;
 import me.fernndinho.shop.products.models.ProductVariantEntity;
 import me.fernndinho.shop.products.repo.ProductRepository;
 import me.fernndinho.shop.products.repo.ProductVariantRepo;
+import me.fernndinho.shop.shared.error.exceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class SimplePaymentService {
 
     public boolean doPayment(UserDetails user, PaymentRequest request) {
         CustomerEntity customer = customerRepo.findByEmail(user.getUsername())
-                .orElseThrow(() -> new RuntimeException("you must be a customer to complete the payment"));
+                .orElseThrow(() -> new BadRequestException("you must be a customer to complete the payment"));
 
         PaymentEntity payment = new PaymentEntity();
 

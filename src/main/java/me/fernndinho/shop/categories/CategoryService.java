@@ -7,6 +7,8 @@ import me.fernndinho.shop.categories.payload.CategoryResponse;
 import me.fernndinho.shop.categories.payload.CategoryCreateRequest;
 import me.fernndinho.shop.products.models.ProductEntity;
 import me.fernndinho.shop.products.repo.ProductRepository;
+import me.fernndinho.shop.shared.error.exceptions.BadRequestException;
+import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +31,7 @@ public class CategoryService {
     public CategoryResponse getCategoryBySlug(String slug) {
         return categoryRepo.findBySlug(slug)
                 .map(CategoryResponse::new)
-                .orElseThrow(() -> new RuntimeException("category not found"));
+                .orElseThrow(() -> new NotFoundException("category not found"));
     }
 
     public CategoryResponse createCategory(CategoryCreateRequest categoryPayload) {
@@ -61,7 +63,7 @@ public class CategoryService {
 
     public void deleteBySlug(String slug, boolean removeChilds) {
         CategoryEntity category = categoryRepo.findBySlug(slug)
-                .orElseThrow(() -> new RuntimeException("category can not be deleted if does not exist"));
+                .orElseThrow(() -> new BadRequestException("category can not be deleted if does not exist"));
 
         if(category.hasFather()) {
             category.getFather().getChilds().remove(category);

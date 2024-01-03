@@ -5,6 +5,8 @@ import me.fernndinho.shop.account.payload.AccountRegisterRequest;
 import me.fernndinho.shop.account.models.AccountEntity;
 import me.fernndinho.shop.account.models.AccountType;
 import me.fernndinho.shop.account.repo.AccountRepository;
+import me.fernndinho.shop.shared.error.exceptions.ConflictException;
+import me.fernndinho.shop.shared.error.exceptions.NotAuthorizedException;
 import me.fernndinho.shop.shared.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,7 @@ public class AccountService implements UserDetailsService {
 
     public ResponseEntity<?> register(AccountRegisterRequest request) {
         if(accountRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("that email its already registered"); //TODO: found a better error
+            throw new ConflictException("that email its already registered");
         }
 
         String email = request.getEmail();
@@ -49,13 +51,13 @@ public class AccountService implements UserDetailsService {
 
     public ResponseEntity<?> login(AccountLoginRequest request) {
         if(!accountRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("invalid password or email");
+            throw new NotAuthorizedException("the password or email are invalid");
         }
 
         AccountEntity entity = accountRepository.findByEmail(request.getEmail()).get();
 
         if(!passwordEncoder.matches(request.getPassword(), entity.getPassword())) {
-            throw new RuntimeException("invalid password or email");
+            throw new NotAuthorizedException("the password or email are invalid");
         }
 
         String token = jwt.generateToken(entity);

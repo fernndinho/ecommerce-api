@@ -15,6 +15,7 @@ import me.fernndinho.shop.products.models.ProductEntity;
 import me.fernndinho.shop.products.models.ProductVariantEntity;
 import me.fernndinho.shop.products.repo.ProductRepository;
 import me.fernndinho.shop.products.repo.ProductVariantRepo;
+import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -72,7 +73,7 @@ public class ProductService {
     public ProductDetailsResponse getProduct(String slug) {
         return productRepo.findBySlug(slug)
                 .map(pe -> productMapper.toDto(pe))
-                .orElseThrow(() -> new RuntimeException("product not found"));
+                .orElseThrow(() -> new NotFoundException("product provided not found"));
     }
 
 
