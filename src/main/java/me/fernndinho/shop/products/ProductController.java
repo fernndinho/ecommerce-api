@@ -3,6 +3,7 @@ package me.fernndinho.shop.products;
 import me.fernndinho.shop.products.payload.ProductCreateRequest;
 import me.fernndinho.shop.products.payload.ProductDetailsResponse;
 import me.fernndinho.shop.products.payload.ProductQueryRequest;
+import me.fernndinho.shop.shared.utils.PageableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/getall")
-    public List<ProductDetailsResponse> getAll(ProductQueryRequest query) {
+    public PageableResponse<ProductDetailsResponse> getAll(ProductQueryRequest query) {
         return productService.getPaginated(query);
     }
 

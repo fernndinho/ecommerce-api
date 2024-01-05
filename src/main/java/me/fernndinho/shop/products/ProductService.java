@@ -16,6 +16,7 @@ import me.fernndinho.shop.products.models.ProductVariantEntity;
 import me.fernndinho.shop.products.repo.ProductRepository;
 import me.fernndinho.shop.products.repo.ProductVariantRepo;
 import me.fernndinho.shop.shared.error.exceptions.NotFoundException;
+import me.fernndinho.shop.shared.utils.PageableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +42,7 @@ public class ProductService {
     @Autowired
     private LocalFileService fileService;
 
-    public List<ProductDetailsResponse> getPaginated(ProductQueryRequest request) {
+    public PageableResponse<ProductDetailsResponse> getPaginated(ProductQueryRequest request) {
         Sort sort = Sort.by(request.getOrderBy());
 
         if(request.isAsc())
@@ -59,10 +60,10 @@ public class ProductService {
             entities = productRepo.findByCategoriesSlugInOrVariantsColorsIn(request.getCategories(), request.getColors(), pageable);
         }
 
-
-        return entities.stream()
+        return PageableResponse.of(entities.map(entity -> productMapper.toDto(entity)));
+        /*return entities.stream()
                 .map(entity -> productMapper.toDto(entity))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
     }
 
     public ProductDetailsResponse getProduct(String slug) {
