@@ -53,15 +53,10 @@ public class ProductService {
 
         Page<ProductEntity> entities;
 
-
-        if(!request.getColors().isEmpty() && !request.getCategories().isEmpty()) {/// refact this
-            entities = productRepo.findByCategoriesSlugInAndVariantsColorsIn(request.getCategories(), request.getColors(), pageable);
-        } if(!request.getCategories().isEmpty() && request.getColors().isEmpty()) {
-            entities = productRepo.findByCategoriesSlugIn(request.getCategories(), pageable);
-        } else if(request.getCategories().isEmpty() && !request.getColors().isEmpty()) {
-            entities = productRepo.findByVariantsColorsIn(request.getColors(),pageable);
-        } else {
+        if(request.getCategories().isEmpty() && request.getColors().isEmpty()) {
             entities = productRepo.findAll(pageable);
+        } else {
+            entities = productRepo.findByCategoriesSlugInOrVariantsColorsIn(request.getCategories(), request.getColors(), pageable);
         }
 
 

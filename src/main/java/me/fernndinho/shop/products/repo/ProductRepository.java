@@ -15,7 +15,5 @@ public interface ProductRepository extends PagingAndSortingRepository<ProductEnt
 
     List<ProductEntity> findByCategoriesIn(List<CategoryEntity> category);
 
-    Page<ProductEntity> findByCategoriesSlugInAndVariantsColorsIn(List<String> categorySlug, List<String> colors, Pageable pageable);
-    Page<ProductEntity> findByVariantsColorsIn(List<String> colors, Pageable pageable);
-    Page<ProductEntity> findByCategoriesSlugIn(List<String> categories, Pageable pageable);
+    Page<ProductEntity> findByCategoriesSlugInOrVariantsColorsIn(List<String> categorySlug, List<String> colors, Pageable pageable);
 }
