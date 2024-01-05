@@ -1,14 +1,12 @@
 package me.fernndinho.shop.colors.payload;
 
+import lombok.*;
 import me.fernndinho.shop.colors.models.ColorEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@Getter @Setter
+@Data
 @AllArgsConstructor
 public class ColorPayload {
     private String name;
