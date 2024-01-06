@@ -3,9 +3,9 @@ package me.fernndinho.shop.colors;
 import me.fernndinho.shop.colors.payload.ColorPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -29,7 +29,7 @@ public class ColorsController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ColorPayload> createColor(@Valid @RequestBody ColorPayload color) {
+    public ResponseEntity<ColorPayload> createColor(@Validated @RequestBody ColorPayload color) {
         ColorPayload createdColor = service.create(color);
 
         return ResponseEntity.status(201).body(createdColor);

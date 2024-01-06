@@ -5,7 +5,7 @@ import lombok.Data;
 import me.fernndinho.shop.products.models.ProductEntity;
 import me.fernndinho.shop.shared.converters.StringListConverter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Data
