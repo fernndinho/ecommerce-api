@@ -2,8 +2,7 @@ package me.fernndinho.shop.colors.models;
 
 import lombok.*;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
+import jakarta.persistence.*;
 
 @Data
 @Entity

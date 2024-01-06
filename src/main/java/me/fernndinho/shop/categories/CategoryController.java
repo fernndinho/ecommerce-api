@@ -4,10 +4,9 @@ import me.fernndinho.shop.categories.payload.CategoryResponse;
 import me.fernndinho.shop.categories.payload.CategoryCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,14 +30,14 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryCreateRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@Validated @RequestBody CategoryCreateRequest request) {
         CategoryResponse savedCategory = categoryService.createCategory(request);
 
         return ResponseEntity.status(201).body(savedCategory);
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("slug") String slug, @Valid @RequestBody CategoryCreateRequest request) { //
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable("slug") String slug, @Validated @RequestBody CategoryCreateRequest request) { //
         CategoryResponse updatedCategory = categoryService.updateCategory(slug, request);
 
         return ResponseEntity.ok(updatedCategory);
