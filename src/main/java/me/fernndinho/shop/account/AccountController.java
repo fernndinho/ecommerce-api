@@ -2,6 +2,7 @@ package me.fernndinho.shop.account;
 
 import me.fernndinho.shop.account.payload.AccountLoginRequest;
 import me.fernndinho.shop.account.payload.AccountRegisterRequest;
+import me.fernndinho.shop.account.payload.AccountResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +17,12 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AccountLoginRequest request) {
-        System.out.println("hi");
+    public AccountResponse login(@RequestBody AccountLoginRequest request) {
         return accountService.login(request);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AccountRegisterRequest request) {
+    public AccountResponse register(@RequestBody AccountRegisterRequest request) {
         return accountService.register(request);
     }
 }

@@ -4,6 +4,7 @@ import me.fernndinho.shop.account.payload.AccountLoginRequest;
 import me.fernndinho.shop.account.payload.AccountRegisterRequest;
 import me.fernndinho.shop.account.models.AccountEntity;
 import me.fernndinho.shop.account.models.AccountType;
+import me.fernndinho.shop.account.payload.AccountResponse;
 import me.fernndinho.shop.account.repo.AccountRepository;
 import me.fernndinho.shop.shared.error.exceptions.ConflictException;
 import me.fernndinho.shop.shared.error.exceptions.NotAuthorizedException;
@@ -32,7 +33,7 @@ public class AccountService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("the user does not exist"));
     }
 
-    public ResponseEntity<?> register(AccountRegisterRequest request) {
+    public AccountResponse register(AccountRegisterRequest request) {
         if(accountRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("that email its already registered");
         }
@@ -46,10 +47,10 @@ public class AccountService implements UserDetailsService {
 
         String token = jwt.generateToken(saved);
 
-        return ResponseEntity.ok(token);
+        return new AccountResponse(token, saved.getType());
     }
 
-    public ResponseEntity<?> login(AccountLoginRequest request) {
+    public AccountResponse login(AccountLoginRequest request) {
         if(!accountRepository.existsByEmail(request.getEmail())) {
             throw new NotAuthorizedException("the password or email are invalid");
         }
@@ -62,6 +63,6 @@ public class AccountService implements UserDetailsService {
 
         String token = jwt.generateToken(entity);
 
-        return ResponseEntity.ok(token);
+        return new AccountResponse(token, entity.getType());
     }
 }
